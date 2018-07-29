@@ -91,10 +91,11 @@ public class Trie {
       else 
          if (s.length() > 1)
             return addHelper(s.substring(1), curr.middle);
-         else
+         else {
             curr.isWord = true;
             curr.count++;
             return curr.count;
+         }
    }
 
    public int add (String s) {

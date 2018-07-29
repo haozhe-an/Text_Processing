@@ -1,3 +1,6 @@
+import java.util.LinkedList;
+import java.util.Iterator;
+
 public class Trie {
    // Field of Trie class
    protected Node root;
@@ -36,11 +39,11 @@ public class Trie {
       @Override
          public String toString() {
             String ret = "[data: " + this.data;
-            ret += "\nl: " + this.left;
-            ret += "\nr: " + this.right;
-            ret += "\nm: " + this.middle;
-            ret += "\ncount: " + this.count;
-            ret += "\nisWord: " + this.isWord + " ]";
+            ret += "  count: " + this.count;
+            ret += "  isWord: " + this.isWord;
+            ret += "\tl: " + this.left;
+            ret += "\tr: " + this.right;
+            ret += "\tm: " + this.middle + " ]";
             return ret;
          }
    }
@@ -52,10 +55,19 @@ public class Trie {
    }
 
    private int addHelper (String s, Node curr) {
-      // Base case: reached a null node
-      if (curr == null) {
-         curr = new Node(s.charAt(0));
-         // Insert all remaining characters to the middle
+      // Assuming curr cannot be null, but s can be an empty string
+      if (s.length() == 0)
+         return 0;
+
+      char curr_char = s.charAt(0);
+      // Base case 1:
+      if (curr_char < curr.data && curr.left == null) {
+         curr.left = new Node(curr_char);
+         return addHelper(s, curr.left);
+      }
+
+      // Base case 2:
+      if (curr_char == curr.data && curr.middle == null) {
          for (int i = 1; i < s.length(); i++) {
             curr.middle = new Node(s.charAt(i));
             curr = curr.middle;
@@ -63,25 +75,26 @@ public class Trie {
          curr.isWord = true;
          curr.count++;
          return curr.count;
-      } else {
-         if (s.charAt(0) == curr.data) {
-            // String is already in the Trie
-            if (s.length() == 1) {
-               curr.isWord = true;
-               curr.count++;
-               return curr.count;
-            }
-            // Erase one character and go to node's middle
-            addHelper(s.substring(1), curr.middle);
-
-         } else if (s.charAt(0) < curr.data) { // Go to curr's left
-            addHelper(s, curr.left);
-         } else {
-            // Go to node's right
-            addHelper(s, curr.right);
-         }
       }
-      return 0;
+
+      // Base case 3:
+      if (curr_char > curr.data && curr.right == null) {
+         curr.right = new Node(curr_char);
+         return addHelper(s, curr.right);
+      }
+
+      // Recursive cases
+      if (curr_char < curr.data)
+         return addHelper(s, curr.left);
+      else if (curr_char > curr.data)
+         return addHelper(s, curr.right);
+      else 
+         if (s.length() > 1)
+            return addHelper(s.substring(1), curr.middle);
+         else
+            curr.isWord = true;
+            curr.count++;
+            return curr.count;
    }
 
    public int add (String s) {
@@ -91,7 +104,7 @@ public class Trie {
       }
 
       // Base case: if trie is empty, initialize it
-      if (root == null) {
+      if (isEmpty()) {
          root = new Node(s.charAt(0));
          Node curr = root;
          for (int i = 1; i < s.length(); i++) {
@@ -136,6 +149,39 @@ public class Trie {
       }
       return prev;
    }
+
+   /** Pre-order dfs */
+   public LinkedList<Node> dfs (){
+      LinkedList<Node> ret = new LinkedList<Node>();
+      dfs_helper(ret, root);
+      return ret;
+   }
+
+   private void dfs_helper(LinkedList<Node> list, Node curr) {
+      if (curr == null)
+         return;
+
+      list.add(curr);
+      dfs_helper(list, curr.left);
+      dfs_helper(list, curr.middle);
+      dfs_helper(list, curr.right);
+
+   }
+
+   @Override
+      public String toString() {
+         /*
+            LinkedList<Node> result = dfs();
+            Iterator itr = result.iterator();
+            String ret = "";
+
+            while (itr.hasNext()){
+            ret += itr.next().toString() + "\n";
+            }
+
+            return ret; */
+         return root.toString();
+      }
 
 
 } // End of Trie class

@@ -10,6 +10,7 @@ public class TestTrie {
       lls.add("worst-case");
       lls.add("trie");
       lls.add("tree");
+      
       lls.add("algorithm");
       lls.add("binary");
       lls.add("average-case");
@@ -19,17 +20,17 @@ public class TestTrie {
       lls.add("test");
       lls.add("tests");
       lls.add("tests");
+     
 
       Trie t = new Trie();
 
       Iterator itr = lls.iterator();
 
-      System.out.println(itr.next());
-
       while (itr.hasNext()){
          String toAdd = (String)itr.next();
          int count = t.add(toAdd);
          System.out.println("Adding " + toAdd + " to Trie.");
+         //System.out.println(t.toString());
          if (count == -1) {
             System.out.println("Incorrect count while adding " + toAdd);
             System.exit(1);
@@ -50,6 +51,8 @@ public class TestTrie {
          else
             System.out.println(t.searchPrefix(query).getData() + ", "
                + t.searchPrefix(query).getCount());
+            
       }
+      
    }
 } // End of testing class
